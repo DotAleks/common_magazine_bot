@@ -87,7 +87,6 @@ async def main() -> None:
         await database.create_all_tables()
 
 
-        logger.info('Redis storage is initialized')
         dp.include_routers(*routers)
         app = get_app(bot,dp)
 

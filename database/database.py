@@ -46,7 +46,6 @@ class Database:
          
    async def create_all_tables(self) -> None:
       """Create all database tables from models."""
-      logger.info("Starting creation of all database tables")
       try:
          async with self.engine.begin() as conn:
             await conn.run_sync(Base.metadata.create_all)
