@@ -30,10 +30,20 @@ class Config:
         load_dotenv()
         
         self.BOT_TOKEN: str = self._get_required('BOT_TOKEN')
+        self.WEBHOOK_HOST: int = int(self._get_required('WEBHOOK_HOST'))
+        self.WEBHOOK_PORT: int = int(self._get_required('WEBHOOK_PORT'))
+        self.WEBHOOK_PATH: str = os.getenv('WEBHOOK_PATH','/webhook')
+
+        self.WEBAPP_HOST: str = self._get_required('WEBAPP_HOST')
+        self.WEBAPP_PORT: int = int(self._get_required('WEBAPP_PORT'))
 
         self._initialized = True
         logger.info('Configuration loaded successfully')
 
+    @property
+    def WEBHOOK_URL(self) -> str:
+        """"""
+        return f''
     
 
 
