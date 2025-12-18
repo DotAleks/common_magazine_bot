@@ -20,7 +20,7 @@ class Config:
         value = os.getenv(var_name)
         if value is None:
             logger.critical(f'Required enviroment variable {var_name} not set!')
-            raise
+            raise ValueError(f"Required environment variable {var_name} is not set")
         return value.strip()
     
     def __init__(self):
@@ -30,7 +30,8 @@ class Config:
         load_dotenv()
         
         self.BOT_TOKEN: str = self._get_required('BOT_TOKEN')
-        self.WEBHOOK_HOST: int = int(self._get_required('WEBHOOK_HOST'))
+
+        self.WEBHOOK_DOMEN: str = self._get_required('WEBHOOK_DOMEN')
         self.WEBHOOK_PORT: int = int(self._get_required('WEBHOOK_PORT'))
         self.WEBHOOK_PATH: str = os.getenv('WEBHOOK_PATH','/webhook')
 
@@ -57,7 +58,7 @@ class Config:
     @property
     def WEBHOOK_URL(self) -> str:
         """Full webhook url"""
-        return f'http://{self.WEBHOOK_HOST}:{self.WEBHOOK_PORT}/{self.WEBHOOK_PATH}'
+        return f'http://{self.WEBHOOK_DOMEN}:{self.WEBHOOK_PORT}/{self.WEBHOOK_PATH}'
     
     @property
     def DB_URL(self) -> str:
