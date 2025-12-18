@@ -37,14 +37,40 @@ class Config:
         self.WEBAPP_HOST: str = self._get_required('WEBAPP_HOST')
         self.WEBAPP_PORT: int = int(self._get_required('WEBAPP_PORT'))
 
+        self.DB_DRIVER = self._get_required('DB_DRIVER')
+        self.DB_HOST = self._get_required('DB_HOST')
+        self.DB_PORT = self._get_required('DB_PORT')
+        self.DB_NAME = self._get_required('DB_NAME')
+        self.DB_USER = self._get_required('DB_USER')
+        self.DB_PASSWD = self._get_required('DB_PASSWD')
+
+        self.REDIS_SCHEME = self._get_required('REDIS_SCHEME')
+        self.REDIS_USER = self._get_required('REDIS_USER')
+        self.REDIS_HOST = self._get_required('REDIS_HOST')
+        self.REDIS_PORT = int(self._get_required('REDIS_PORT'))
+        self.REDIS_PASSWD = self._get_required('REDIS_PASSWD')
+        self.REDIS_DB = self._get_required('REDIS_DB')
+        
         self._initialized = True
         logger.info('Configuration loaded successfully')
 
     @property
     def WEBHOOK_URL(self) -> str:
-        """"""
-        return f''
+        """Full webhook url"""
+        return f'http://{self.WEBHOOK_HOST}:{self.WEBHOOK_PORT}/{self.WEBHOOK_PATH}'
     
+    @property
+    def DB_URL(self) -> str:
+        """Full databse url"""
+        return f'{self.DB_DRIVER}://{self.DB_USER}:{self.DB_PASSWD}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}'
+    @property
+    def REDIS_URL(self) -> str:
+        """Full redis url"""
+        if self.REDIS_SCHEME == 'unix':
+            return f'{self.REDIS_SCHEME}://{self.REDIS_HOST}?db={self.REDIS_DB}'
+
+        return f'{self.REDIS_SCHEME}://{self.REDIS_USER}:{self.REDIS_PASSWD}@{self.REDIS_HOST}:{self.REDIS_PORT}/{self.REDIS_DB}'
+        
 
 
 config = Config()

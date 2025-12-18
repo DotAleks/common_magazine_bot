@@ -1,11 +1,16 @@
+import asyncio
 from aiohttp import web
 
+from redis.asyncio import Redis
+
 from aiogram import Bot, Dispatcher
+from aiogram.fsm.storage.redis import RedisStorage
 from aiogram.webhook.aiohttp_server import SimpleRequestHandler
 
 from core.config import config
 from core.logger import logger
 from bot.handlers import routers
+from database import Database
 
 
 async def on_startup(bot: Bot) -> None:
@@ -57,8 +62,32 @@ async def main() -> None:
     try:
         logger.info('Running a bot...')
         bot = Bot(token=config.BOT_TOKEN)
+
+        try:
+            redis=Redis(
+            host=config.REDIS_HOST,
+            port=config.REDIS_PORT,
+            db=config.REDIS_DB,
+            decode_responses=False
+            )
+            storage = RedisStorage(redis)
+            logger.info('Redis storage is initialized')
+        except Exception as error:
+            logger.error(f'Failed to create Redis connection: {error}')
+        
+        dp = Dispatcher(storage=storage)
+
+        try:
+            database = Database(config.DB_URL)
+            logger.info('Database is initialized')
+        except Exception as error:
+            logger.critical(f'Failed to create database connection: {error}')
+            raise
+        dp['database'] = database
+        await database.create_all_tables()
+
+
         logger.info('Redis storage is initialized')
-        dp = Dispatcher()
         dp.include_routers(*routers)
         app = get_app(bot,dp)
 
@@ -67,3 +96,9 @@ async def main() -> None:
         logger.info(f'The server is running on {config.WEBAPP_HOST}:{config.WEBAPP_PORT}')
     except Exception as error:
         logger.critical(f'Error starting the bot: {error}')
+
+if __name__ == '__main__':
+    try:
+        asyncio.run(main())
+    except Exception as error:
+        logger.critical(f'An unexpected error occurred while starting the bot: {error}')
