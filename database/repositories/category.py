@@ -1,6 +1,6 @@
 from typing import Sequence, Optional
 
-from sqlalchemy import select, update
+from sqlalchemy import select, update, or_
 from sqlalchemy.exc import SQLAlchemyError
 
 from database.repositories import BaseRepository
@@ -25,14 +25,17 @@ class CategoryRepository(BaseRepository):#TODO: Добавить логиров�
             result = await session.execute(stmt)
             return result.scalars().all()
         
-    async def get_by_gender(self, gender: Gender) -> Sequence[Category]:
+    async def get_by_gender(self, gender: str) -> Sequence[Category]:
         """Get categories by gender"""
         async with self.database.get_session() as session:
-            stmt = select(Category).where(Category.gender == gender)
+            stmt = select(Category).where(or_(
+                Category.gender == gender,
+                Category.gender == Gender.UNISEX.value
+            ))
             result = await session.execute(stmt)
             return result.scalars().all()
         
-    async def create(self, name: str, gender: Gender) -> Category:
+    async def create(self, name: str, gender: str) -> Category:
         """Create a new category"""
         category = Category(
             name=name,
@@ -49,7 +52,7 @@ class CategoryRepository(BaseRepository):#TODO: Добавить логиров�
         self, 
         category_id: int, 
         name: Optional[str] = None, 
-        gender: Optional[Gender] = None
+        gender: Optional[str] = None
     ) -> Optional[Category]:
         """Update category fields."""
         logger.info(

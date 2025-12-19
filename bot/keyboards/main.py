@@ -3,6 +3,7 @@ from aiogram.types.reply_keyboard_markup import ReplyKeyboardMarkup
 
 
 def get_main_kb() -> ReplyKeyboardMarkup:
+    """"""
     return ReplyKeyboardMarkup(
         keyboard=[
             [KeyboardButton(text='Каталог'), KeyboardButton(text='Корзина')],
