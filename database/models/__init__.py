@@ -1,5 +1,5 @@
 from .base import Base
-from .categories import Category
+from .category import Category
 
 
 __all__ = ['Base','Category']

@@ -7,7 +7,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 from database.models import Base
 
 
-class Gender(enum.Enum):
+class Gender(enum.Enum):#TODO: перенести в database/enums.py либо core/enums.py
     MALE = 'MALE'
     FEMALE = 'FEMALE'
     UNISEX = 'UNISEX'

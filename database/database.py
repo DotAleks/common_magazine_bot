@@ -1,4 +1,5 @@
 from typing import AsyncIterator
+from contextlib import asynccontextmanager
 
 from sqlalchemy.ext.asyncio import (
    create_async_engine,
@@ -32,7 +33,7 @@ class Database:
          expire_on_commit=False,
          autoflush=False
       )
-   
+   @asynccontextmanager
    async def get_session(self) -> AsyncIterator[AsyncSession]:
       """Context manager for async database sessions with auto commit/rollback."""
       async with self.async_session_factory() as session:
@@ -40,8 +41,8 @@ class Database:
             yield session
             await session.commit()
         except Exception as error:
-           logger.error(f"Database session error: {error}")
            await session.rollback()
+           logger.error(f"Database session error: {error}")
            raise
          
    async def create_all_tables(self) -> None:
