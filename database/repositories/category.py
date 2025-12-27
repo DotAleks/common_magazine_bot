@@ -1,7 +1,6 @@
 from typing import Sequence, Optional
 
 from sqlalchemy import select, update, or_
-from sqlalchemy.exc import SQLAlchemyError
 
 from database.repositories import BaseRepository
 from database.models import Category
@@ -10,7 +9,7 @@ from database.models.category import Gender
 from core.logger import logger
 
 
-class CategoryRepository(BaseRepository):#TODO: Добавить логирование и протестировать все.
+class CategoryRepository(BaseRepository):
     async def get_by_id(self, category_id: int) -> Optional[Category]:
         """Get category by id"""
         async with self.database.get_session() as session:
